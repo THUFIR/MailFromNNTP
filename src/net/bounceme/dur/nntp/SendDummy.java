@@ -9,6 +9,7 @@ import javax.mail.Authenticator;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.NoSuchProviderException;
+import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
@@ -41,8 +42,19 @@ public class SendDummy {
         props = PropertiesReader.getProps();
         props.list(System.out);
         System.out.println("\n========message follows==========\n");
-        Authenticator auth = new SMTPAuthenticator();
-        session = Session.getDefaultInstance(props, auth);
+        //session = Session.getDefaultInstance(props, auth);
+
+
+        session = Session.getDefaultInstance(props,
+                new javax.mail.Authenticator() {
+
+            @Override
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(props.getProperty("mail.smtp.email"), props.getProperty("mail.smtp.password"));
+                    }
+                });
+
+
         session.setDebug(true);
         message = new MimeMessage(session);
         String host = props.getProperty("mail.smtp.host");
