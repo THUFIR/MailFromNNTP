@@ -42,9 +42,7 @@ public class SendDummy {
         props = PropertiesReader.getProps();
         props.list(System.out);
         System.out.println("\n========message follows==========\n");
-        //session = Session.getDefaultInstance(props, auth);
-
-
+        
         session = Session.getDefaultInstance(props,
                 new javax.mail.Authenticator() {
 
