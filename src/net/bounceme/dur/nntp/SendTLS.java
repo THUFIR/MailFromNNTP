@@ -14,14 +14,9 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 /*
- http://www.mkyong.com/java/javamail-api-sending-email-via-gmail-smtp-example/
+ * http://www.mkyong.com/java/javamail-api-sending-email-via-gmail-smtp-example/
  */
-
 public class SendTLS {
-
-    private Message message = null;
-    private Session session = null;
-    private Properties props = null;
 
     public SendTLS() {
         try {
@@ -40,25 +35,30 @@ public class SendTLS {
     }
 
     private void sendMessage() throws NoSuchProviderException, MessagingException, IOException {
-        java.security.Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
-        props = PropertiesReader.getProps();
+        Properties props = PropertiesReader.getProps();
         props.list(System.out);
         System.out.println("\n========message follows==========\n");
-        session = Session.getInstance(props,
+        final String username = props.getProperty("mail.smtp.username");
+        final String password = props.getProperty("mail.smtp.password");
+        Session session = Session.getInstance(props,
                 new javax.mail.Authenticator() {
-            @Override
+
+                    @Override
                     protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(props.getProperty("mail.smtp.username"), props.getProperty("mail.smtp.password"));
+                        return new PasswordAuthentication(username, password);
                     }
                 });
-        session.setDebug(true);
-        message = new MimeMessage(session);
-        message.setFrom(new InternetAddress(props.getProperty("mail.smtp.user.email")));
-        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(props.getProperty("mail.smtp.user.email"), false));
-        message.setText("hello gmail");
-        System.out.println(message.getFrom().toString());
-        System.out.println(message.getRecipients(Message.RecipientType.TO).toString());
-        System.out.println(message.getContent().toString());
-        Transport.send(message);
+        try {
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress("from-email@gmail.com"));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse("to-email@gmail.com"));
+            message.setSubject("Testing Subject");
+            message.setText("Dear Mail Crawler,\n\n No spam to my email, please!");
+            Transport.send(message);
+            System.out.println("Done");
+
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
