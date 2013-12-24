@@ -33,10 +33,13 @@ public class SendDummy {
         }
     }
 
+    /*
     public static void main(String[] args) {
         new SendDummy();
     }
 
+     * 
+     */
     private void sendMessage() throws NoSuchProviderException, MessagingException, IOException {
         java.security.Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
         props = PropertiesReader.getProps();
@@ -66,7 +69,7 @@ public class SendDummy {
         System.out.println(message.getFrom().toString());
         System.out.println(message.getRecipients(Message.RecipientType.TO).toString());
         System.out.println(message.getContent().toString());
-        transport = (SMTPTransport) session.getTransport("smtp");
+        transport = (SMTPTransport) session.getTransport("smtps");
         System.out.println("trying...");
         transport.connect(host, port, user, password);
         System.out.println("...connected");
