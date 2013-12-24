@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.mail.Authenticator;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.NoSuchProviderException;
@@ -12,38 +13,36 @@ import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-public class Gmail {
+public class SendDummy {
 
     private Message message = null;
     private Session session = null;
     private Properties props = null;
     private SMTPTransport transport = null;
 
-    public Gmail() {
+    public SendDummy() {
         try {
             sendMessage();
         } catch (NoSuchProviderException ex) {
-            Logger.getLogger(Gmail.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SendDummy.class.getName()).log(Level.SEVERE, null, ex);
         } catch (MessagingException ex) {
-            Logger.getLogger(Gmail.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SendDummy.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(Gmail.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SendDummy.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    /*
     public static void main(String[] args) {
-        new Gmail();
+        new SendDummy();
     }
 
-     * 
-     */
     private void sendMessage() throws NoSuchProviderException, MessagingException, IOException {
+        java.security.Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
         props = PropertiesReader.getProps();
-
         props.list(System.out);
         System.out.println("\n========message follows==========\n");
-        session = Session.getInstance(props);
+        Authenticator auth = new SMTPAuthenticator();
+        session = Session.getDefaultInstance(props, auth);
         session.setDebug(true);
         message = new MimeMessage(session);
         String host = props.getProperty("mail.smtp.host");
@@ -51,8 +50,8 @@ public class Gmail {
         String password = props.getProperty("mail.smtp.password");
         int port = Integer.parseInt(props.getProperty("mail.smtp.port"));
         System.out.println(host + user + password + port);
-        message.setFrom(new InternetAddress(props.getProperty("mail.smtp.user")));
-        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(props.getProperty("mail.smtp.user"), false));
+        message.setFrom(new InternetAddress(props.getProperty("mail.smtp.user.email")));
+        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(props.getProperty("mail.smtp.user.email"), false));
         message.setText("hello gmail");
         System.out.println(message.getFrom().toString());
         System.out.println(message.getRecipients(Message.RecipientType.TO).toString());
