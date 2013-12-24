@@ -50,10 +50,10 @@ public class SendTLS {
                 });
         try {
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress("from-email@gmail.com"));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse("to-email@gmail.com"));
+            message.setFrom(new InternetAddress(props.getProperty("mail.smtp.username")));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(props.getProperty("mail.smtp.username")));
             message.setSubject("Testing Subject");
-            message.setText("Dear Mail Crawler,\n\n No spam to my email, please!");
+            message.setText("Dear Google,\n\n please accept this authenticator.");
             Transport.send(message);
             System.out.println("Done");
 
