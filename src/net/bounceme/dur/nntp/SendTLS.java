@@ -35,17 +35,15 @@ public class SendTLS {
     }
 
     private void sendMessage() throws NoSuchProviderException, MessagingException, IOException {
-        Properties props = PropertiesReader.getProps();
+        final Properties props = PropertiesReader.getProps();
         props.list(System.out);
         System.out.println("\n========message follows==========\n");
-        final String username = props.getProperty("mail.smtp.username");
-        final String password = props.getProperty("mail.smtp.password");
         Session session = Session.getInstance(props,
                 new javax.mail.Authenticator() {
 
                     @Override
                     protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(username, password);
+                        return new PasswordAuthentication(props.getProperty("mail.smtp.username"), props.getProperty("mail.smtp.password"));
                     }
                 });
         try {
